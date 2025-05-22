@@ -1,0 +1,31 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="bongo-frog"
+run/main_scene="uid://yw22freucmpe"
+config/features=PackedStringArray("4.4", "GL Compatibility")
+boot_splash/bg_color=Color(0, 0, 0, 1)
+boot_splash/image="uid://ybsk1dcxybir"
+config/icon="uid://c6bo4mg8u4iu5"
+boot_splash/minimum_display_time=3000
+
+[editor]
+
+naming/node_name_num_separator=3
+naming/node_name_casing=2
+naming/scene_name_casing=3
+naming/script_name_casing=3
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
