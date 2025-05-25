@@ -42,8 +42,8 @@ var coyote_timer: float = 0.0
 @export var camera: Camera3D
 
 # Water detection
-var feet_water_bodies: Array[Area3D] = []
-@export var feet_collider: Area3D
+var center_of_mass_water_bodies: Array[Area3D] = []
+@export var center_of_mass_collider: Area3D
 var head_water_bodies: Array[Area3D] = []
 @export var head_collider: Area3D
 @export var underwater_effect: Control
@@ -51,14 +51,14 @@ var head_water_bodies: Array[Area3D] = []
 func _ready():
     assert(camera_pivot, "Camera pivot node is not assigned.")
     assert(camera, "Camera node is not assigned.")
-    assert(feet_collider, "Feet collider node is not assigned.")
+    assert(center_of_mass_collider, "center_of_mass collider node is not assigned.")
     assert(head_collider, "Head collider node is not assigned.")
     assert(underwater_effect, "Underwater effect node is not assigned.")
     # Capture mouse
     Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
     
-    feet_collider.area_entered.connect(_on_feet_entered_area)
-    feet_collider.area_exited.connect(_on_feet_exited_area)
+    center_of_mass_collider.area_entered.connect(_on_center_of_mass_enter_area)
+    center_of_mass_collider.area_exited.connect(_on_center_of_mass_exited_area)
     head_collider.area_entered.connect(_on_head_entered_area)
     head_collider.area_exited.connect(_on_head_exited_area)
 
@@ -97,7 +97,7 @@ func update_movement_state():
     is_sprinting = Input.is_action_pressed("sprint") and not is_swimming
     
     # Update swimming state
-    is_swimming = feet_water_bodies.size() > 0
+    is_swimming = center_of_mass_water_bodies.size() > 0
     is_head_underwater = head_water_bodies.size() > 0
     is_on_surface = is_swimming and global_position.y >= swim_surface_level - 0.5
 
@@ -108,8 +108,8 @@ func handle_movement(delta):
     # Calculate direction based on swimming mode
     var direction: Vector3
     if is_swimming and camera_relative_swimming:
-        # Camera-relative movement for swimming
-        direction = get_camera_relative_direction(input_dir)
+        # Camera-relative movement for swimming (including vertical component)
+        direction = get_camera_relative_direction_3d(input_dir)
     else:
         # Standard horizontal movement (ignores camera pitch)
         direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
@@ -162,13 +162,15 @@ func handle_movement(delta):
         if is_swimming and camera_relative_swimming:
             velocity.y = move_toward(velocity.y, 0, friction_force * delta * 0.5) # Reduced Y friction for better swimming feel
 
-func get_camera_relative_direction(input_dir: Vector2) -> Vector3:
-    # Get the camera's forward direction (including pitch)
-    var camera_forward = - camera_pivot.global_transform.basis.z
-    var camera_right = camera_pivot.global_transform.basis.x
+func get_camera_relative_direction_3d(input_dir: Vector2) -> Vector3:
+    # Get the camera's full transform including pitch for true 3D movement
+    var camera_transform = camera_pivot.global_transform
+    var camera_forward = - camera_transform.basis.z # Forward direction (includes pitch)
+    var camera_right = camera_transform.basis.x # Right direction
+    var camera_up = camera_transform.basis.y # Up direction (for potential future use)
     
-    # Create movement direction relative to camera orientation
-    var forward_movement = camera_forward * -input_dir.y # Forward/backward
+    # Create movement direction relative to camera orientation in 3D space
+    var forward_movement = camera_forward * -input_dir.y # Forward/backward (includes up/down based on camera pitch)
     var right_movement = camera_right * input_dir.x # Left/right
     
     return (forward_movement + right_movement).normalized()
@@ -224,17 +226,17 @@ func handle_swimming(delta):
             else:
                 velocity.y = move_toward(velocity.y, 0, water_drag * delta * 3.0)
     else:
-        # With camera-relative swimming, vertical controls still work
+        # With camera-relative swimming, vertical controls are supplementary to camera direction
         if swim_down_pressed:
             velocity.y -= swim_speed * delta * 2.0 # Force downward
         elif swim_up_pressed:
-            # Treat jump and swim-up identically - no special case for jump anymore
+            # Treat jump and swim-up identically - force upward
             velocity.y += swim_speed * delta * 1.5 # Force upward
         else:
-            # Gentle buoyancy when not actively moving up
-            if not is_on_surface:
-                velocity.y = move_toward(velocity.y, buoyancy_force * 0.1, water_drag * delta)
-            else:
+            # Gentle buoyancy when not actively moving up, but don't fight camera-relative movement
+            if not is_on_surface and abs(velocity.y) < buoyancy_force:
+                velocity.y = move_toward(velocity.y, buoyancy_force * 0.1, water_drag * delta * 0.5)
+            elif is_on_surface and velocity.y > 0:
                 velocity.y = move_toward(velocity.y, 0, water_drag * delta * 2.0)
 
 func apply_movement(delta):
@@ -261,13 +263,13 @@ func update_camera_effects():
     underwater_effect.visible = is_head_underwater
 
 # Water detection functions
-func _on_feet_entered_area(area: Area3D):
+func _on_center_of_mass_enter_area(area: Area3D):
     if area.is_in_group("water"):
-        feet_water_bodies.append(area)
+        center_of_mass_water_bodies.append(area)
 
-func _on_feet_exited_area(area: Area3D):
+func _on_center_of_mass_exited_area(area: Area3D):
     if area.is_in_group("water"):
-        feet_water_bodies.erase(area)
+        center_of_mass_water_bodies.erase(area)
 
 func _on_head_entered_area(area: Area3D):
     if area.is_in_group("water"):

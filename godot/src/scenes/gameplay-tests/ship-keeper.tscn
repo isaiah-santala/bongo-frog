@@ -1,17 +1,16 @@
-[gd_scene load_steps=18 format=3 uid="uid://cfa5ucdmqs52w"]
+[gd_scene load_steps=19 format=3 uid="uid://cfa5ucdmqs52w"]
 
 [ext_resource type="Script" uid="uid://bhkts2pb8laal" path="res://src/scenes/gameplay-tests/ship-keeper-player-controller.gd" id="1_ghtud"]
 [ext_resource type="Script" uid="uid://ilcdlityvwih" path="res://src/scenes/gameplay-tests/water-collider.gd" id="2_tap73"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hqpxh"]
-
-[sub_resource type="Sky" id="Sky_ghtud"]
-sky_material = SubResource("ProceduralSkyMaterial_hqpxh")
-
 [sub_resource type="Environment" id="Environment_tap73"]
-background_mode = 2
-sky = SubResource("Sky_ghtud")
+tonemap_mode = 2
+tonemap_white = 0.5
 fog_enabled = true
+fog_mode = 1
+fog_light_color = Color(0, 0, 0, 1)
+fog_density = 1.0
+fog_depth_curve = 0.353552
 volumetric_fog_density = 1.156
 
 [sub_resource type="BoxMesh" id="BoxMesh_hqpxh"]
@@ -43,15 +42,25 @@ size = Vector3(1, 0.598633, 1)
 [sub_resource type="PlaneMesh" id="PlaneMesh_hqpxh"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hqpxh"]
-albedo_color = Color(0, 0, 0.258824, 1)
+transparency = 1
+albedo_color = Color(2.76752e-07, 0.223706, 0.27882, 0.839216)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ghtud"]
-size = Vector3(200, 100, 200)
+size = Vector3(475.122, 312.509, 425.009)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tap73"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tap73"]
+albedo_color = Color(0.408329, 0.408329, 0.408329, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_cmjyv"]
+points = PackedVector3Array(0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5)
 
 [node name="ShipKeeper" type="Node3D"]
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.627963, 0.778243, 0, -0.778243, 0.627963, 0, 0, 0)
+light_color = Color(0.428536, 0.781835, 0.738627, 1)
 
 [node name="WorlEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_tap73")
@@ -66,6 +75,8 @@ skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_ghtud")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Ship/Hull"]
+collision_layer = 8
+collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ship/Hull/StaticBody3D"]
 shape = SubResource("ConvexPolygonShape3D_ghtud")
@@ -77,6 +88,8 @@ skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_ghtud")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Ship/Hull-2"]
+collision_layer = 8
+collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ship/Hull-2/StaticBody3D"]
 shape = SubResource("ConvexPolygonShape3D_tap73")
@@ -88,16 +101,19 @@ skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_ghtud")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Ship/Hull-3"]
+collision_layer = 8
+collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ship/Hull-3/StaticBody3D"]
 shape = SubResource("ConvexPolygonShape3D_hxqse")
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="." node_paths=PackedStringArray("camera_pivot", "camera", "feet_collider", "head_collider", "underwater_effect")]
+[node name="CharacterBody3D" type="CharacterBody3D" parent="." node_paths=PackedStringArray("camera_pivot", "camera", "center_of_mass_collider", "head_collider", "underwater_effect")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+collision_mask = 10
 script = ExtResource("1_ghtud")
 camera_pivot = NodePath("CameraPivot")
 camera = NodePath("CameraPivot/Camera3D")
-feet_collider = NodePath("FeetCollider")
+center_of_mass_collider = NodePath("CenterOfMassCollider")
 head_collider = NodePath("HeadCollider")
 underwater_effect = NodePath("UnderWaterEffect")
 
@@ -109,11 +125,12 @@ shape = SubResource("CapsuleShape3D_hqpxh")
 [node name="Camera3D" type="Camera3D" parent="CharacterBody3D/CameraPivot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.644579, 0.226873)
 
-[node name="FeetCollider" type="Area3D" parent="CharacterBody3D"]
+[node name="CenterOfMassCollider" type="Area3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0126355, 0)
 collision_mask = 14
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/FeetCollider"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7677, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/CenterOfMassCollider"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.144762, 0)
 shape = SubResource("BoxShape3D_tap73")
 
 [node name="UnderWaterEffect" type="ColorRect" parent="CharacterBody3D"]
@@ -145,5 +162,583 @@ collision_mask = 0
 script = ExtResource("2_tap73")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ocean/WaterCollider"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -50, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55.0815, -156.255, -0.481873)
 shape = SubResource("BoxShape3D_ghtud")
+
+[node name="Rocks" type="Node3D" parent="."]
+
+[node name="M-2" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-0.15604, -13.6473, -48.1012, -20.8094, 43.7553, -12.3467, 45.4637, 19.9806, -5.81638, 7.78797, -68.1576, -11.4022)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-2"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-2/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(35.2095, 13.8468, -32.6888, -33.3088, 28.8119, -23.6728, 12.2807, 38.4466, 29.5134, -38.2882, -79.9846, -16.9737)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-3" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-2.52655, 14.7903, -47.6955, -49.8168, 2.5522, 3.43036, 3.44928, 47.6942, 14.6071, -8.44685, -89.2462, -43.1647)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-3"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-3/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-4" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-31.0037, -34.0575, 19.4642, 6.08935, 20.3304, 45.2725, -38.7516, 30.4428, -8.45859, 31.6965, -90.3141, -29.1827)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-4"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-4/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-5" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(45.2687, 8.11282, -19.6195, 3.67656, 42.5118, 26.062, 20.91, -25.0385, 37.8925, 18.961, -124.822, -27.7215)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-5"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-5/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-15" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-0.156041, -13.6473, -48.1012, 47.0927, -16.2025, 4.4442, -16.8002, -45.2905, 12.9043, -52.7751, -185.042, -3.26314)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-15"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-15/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-16" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(35.2095, 13.8468, -32.6888, 32.0334, 7.45298, 37.6605, 15.3021, -47.4628, -3.62287, -98.8513, -180.785, 9.09792)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-16"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-16/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-17" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-2.52655, 14.7903, -47.6955, 37.2197, 32.396, 8.07429, 33.2913, -35.0962, -12.6468, -69.0099, -193.093, 34.0032)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-17"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-17/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-18" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-31.0037, -34.0575, 19.4642, -32.0156, 7.63365, -37.6394, 22.6664, -35.8025, -26.5409, -28.8666, -182.329, 25.0157)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-18"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-18/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-19" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(45.2687, 8.11282, -19.6195, 12.419, -47.5945, 8.974, -17.2195, -12.9979, -45.1059, -41.602, -157.212, 48.7237)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-19"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-19/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-20" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-9.95752, -37.5694, -31.4546, 32.1916, -29.2143, 24.7027, -36.9398, -15.3319, 30.0064, -34.7348, -231.611, 5.25718)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-20"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-20/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-21" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(37.5061, -16.5453, -28.6277, 22.4459, -19.047, 40.4153, -24.2791, -43.1678, -6.86009, -64.8651, -207.948, 34.0004)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-21"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-21/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-22" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(17.4323, -8.54369, -46.0773, 46.7169, 7.0431, 16.3683, 3.69364, -48.7586, 10.4383, -26.0926, -216.798, 42.9803)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-22"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-22/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-23" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-11.8776, -48.5681, 0.252832, -7.04519, 1.46536, -49.4795, 48.055, -11.7895, -7.19154, 1.2008, -224.477, 11.2908)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-23"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-23/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-24" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(26.6325, -1.02723, -42.3043, -11.5439, -48.2658, -6.09545, -40.7117, 13.0139, -25.9459, 4.74673, -188.898, 20.0488)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-24"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-24/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-6" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(45.2687, 8.11282, -19.6195, 3.67656, 42.5118, 26.062, 20.91, -25.0385, 37.8925, -73.2687, -131.39, 28.3054)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-6"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-6/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-7" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(45.2687, 20.7844, -4.33055, 3.67656, 2.37023, 49.8083, 20.91, -45.4136, 0.61763, -114.342, -176.519, 125.163)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-7"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-7/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-9" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(28.3054, -18.4871, 36.8379, 34.9951, 34.3886, -9.63156, -21.7749, 31.2354, 32.4068, -101.344, -157.696, 92.4096)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-9"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-9/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-10" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(16.0314, 24.8205, 40.3353, 13.0531, 38.6186, -28.9521, -45.5259, 19.8129, 5.90253, -103.412, -157.9, 53.1154)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-10"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-10/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-11" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(45.2687, 8.11282, -19.6195, -10.438, 48.7402, -3.92936, 18.4876, 7.6533, 45.8218, -68.0409, -60.9246, -22.1041)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-11"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-11/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-12" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(45.2687, 20.7844, -4.33055, -10.438, 30.6693, 38.0847, 18.4876, -33.5769, 32.1061, -109.115, -157.293, 24.0602)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-12"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-12/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-13" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(28.3054, -18.4871, 36.8379, 40.8611, 6.73028, -28.0192, 5.40126, 45.9666, 18.9181, -96.1162, -121.953, 10.7115)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-13"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-13/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-14" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(16.0314, 24.8205, 40.3353, 38.9931, 17.2514, -26.1137, -26.8799, 39.8288, -13.8253, -98.1838, -97.1587, -19.7729)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-14"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-14/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-8" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(45.2687, 20.7844, -4.33055, 3.67656, 2.37023, 49.8083, 20.91, -45.4136, 0.61763, 39.896, -161.583, 2.12129)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-8"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-8/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-25" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(35.5208, -28.5198, -20.6128, 5.28139, 33.2777, -36.9419, 34.7905, 24.0668, 26.6535, -87.6728, -112.552, -62.4615)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-25"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-25/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-26" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(48.1741, 5.56483, 12.1774, 0.106842, 45.3153, -21.1309, -13.3882, 20.3852, 43.6486, -107.418, -147.939, -36.9301)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-26"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-26/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-27" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(34.7418, 28.5916, -21.8066, -35.7046, 31.0257, -16.2046, 4.26497, 26.8314, 41.9748, -96.789, -150.568, -76.2031)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-27"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-27/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-28" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-39.3319, -18.6377, -24.6098, -29.3636, 10.2842, 39.141, -9.52808, 45.2424, -19.0353, -67.4519, -123.847, -91.4823)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-28"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-28/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-29" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(32.0967, -36.6666, -11.1965, 35.9549, 23.7212, 25.388, -13.306, -24.3488, 41.5943, -49.8616, -154.804, -82.1355)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-29"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-29/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-30" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-40.5509, -17.3828, -23.5258, 26.3416, -39.1853, -16.451, -12.718, -25.7362, 40.9377, -36.1903, -225.195, -17.1048)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-30"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-30/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-31" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(4.29831, -19.6652, -45.769, 48.5664, -8.56621, 8.24159, -11.0828, -45.1652, 18.365, -58.7257, -240.953, 22.1095)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-31"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-31/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-32" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-11.6708, -30.6698, -37.7248, 40.4092, 15.4541, -25.0653, 27.035, -36.3392, 21.1796, -22.176, -222.89, 21.8239)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-32"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-32/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-33" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(15.6955, -40.7076, 24.4242, -29.3215, -28.5439, -28.7314, 37.335, -5.30396, -32.8324, -11.742, -197.928, -10.9814)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-33"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-33/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-34" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(8.27034, 31.39, -38.0299, 25.1771, -35.844, -24.1105, -42.3995, -15.1616, -21.735, -25.1064, -175.936, 15.3401)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-34"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-34/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-35" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-45.0002, -7.56398, -20.4394, 1.39459, -47.7953, 14.6172, -21.7494, 12.5854, 43.2269, 9.97684, -245.411, -22.2645)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-35"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-35/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-36" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-6.23819, -16.0165, -46.9527, 25.1384, -41.8175, 10.9249, -42.7685, -22.2433, 13.2699, -9.60204, -231.409, 19.1427)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-36"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-36/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-37" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-21.0658, -32.3013, -31.8254, 44.5515, -21.282, -7.88923, -8.44951, -31.6813, 37.7479, 22.0429, -213.263, 0.932877)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-37"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-37/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-38" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(20.7418, -33.2251, 31.0784, 10.1668, -29.9071, -38.7582, 44.3442, 22.3977, -5.6507, 27.6111, -218.562, -40.8886)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-38"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-38/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-39" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(3.67902, 38.9485, -31.1364, -12.4762, -29.509, -38.387, -48.2785, 10.5938, 7.54729, 8.98585, -187.115, -36.4981)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-39"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-39/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-40" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(32.0967, -36.6666, -11.1965, 35.9549, 23.7212, 25.388, -13.306, -24.3488, 41.5943, -69.9353, -183.211, 20.2292)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-40"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-40/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-41" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(32.0967, -11.3717, -36.6127, 35.9549, -7.64394, 33.8942, -13.306, -48.0859, 3.27043, -16.119, -194.078, 120.682)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-41"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-41/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-42" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-18.8292, -19.4462, 42.0393, 30.4419, 29.0075, 27.0528, -34.9106, 35.7828, 0.915827, -37.2762, -188.306, 87.2891)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-42"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-42/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-43" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-21.442, -3.87814, 45.0022, -2.50613, 49.8408, 3.10103, -45.0994, -0.925788, -21.5681, -56.5825, -207.149, 58.6433)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-43"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-43/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-44" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(40.7497, -25.7492, 13.2831, 24.6944, 42.8558, 7.31875, -15.1543, 0.59567, 47.6444, -139.384, -152.229, -21.6133)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-44"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-44/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-45" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(40.7497, -25.4679, -13.8149, 24.6944, 18.0595, 39.548, -15.1543, -39.0543, 27.2967, -73.6797, -222.742, 40.1601)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-45"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-45/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-46" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-10.2309, 6.58619, 48.4969, 46.8445, 15.6671, 7.75458, -14.1747, 47.023, -9.37629, -97.2411, -196.372, 21.5729)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-46"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-46/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-47" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-30.7303, 20.2569, 33.8424, 24.547, 43.4031, -3.68991, -30.8722, 14.3467, -36.6207, -129.767, -193.246, -0.35088)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-47"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-47/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
+
+[node name="M-48" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(32.0967, -11.3717, -36.6127, 35.9549, -7.64394, 33.8942, -13.306, -48.0859, 3.27043, 1.03695, -156.868, -72.8968)
+mesh = SubResource("BoxMesh_tap73")
+surface_material_override/0 = SubResource("StandardMaterial3D_tap73")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Rocks/M-48"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-48/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmjyv")
