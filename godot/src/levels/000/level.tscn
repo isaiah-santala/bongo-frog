@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://ttof338bm3p"]
+
+[ext_resource type="Script" uid="uid://cvbo74587lpjw" path="res://src/levels/000/script.gd" id="1_t546p"]
+[ext_resource type="Resource" uid="uid://cc7o50s5el7t7" path="res://src/levels/000/data.tres" id="2_wp0v0"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_opa1m"]
+
+[node name="level" type="Node3D"]
+script = ExtResource("1_t546p")
+level_data = ExtResource("2_wp0v0")
+
+[node name="player-reference" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_opa1m")
+
+[node name="mesh_instance_3d" type="MeshInstance3D" parent="."]

@@ -1,0 +1,128 @@
+[gd_scene load_steps=17 format=3 uid="uid://cfa5ucdmqs52w"]
+
+[ext_resource type="Script" uid="uid://bhkts2pb8laal" path="res://src/scenes/gameplay-tests/ship-keeper-player-controller.gd" id="1_ghtud"]
+[ext_resource type="Script" uid="uid://ilcdlityvwih" path="res://src/scenes/gameplay-tests/water-collider.gd" id="2_tap73"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hqpxh"]
+
+[sub_resource type="Sky" id="Sky_ghtud"]
+sky_material = SubResource("ProceduralSkyMaterial_hqpxh")
+
+[sub_resource type="Environment" id="Environment_tap73"]
+background_mode = 2
+sky = SubResource("Sky_ghtud")
+fog_enabled = true
+volumetric_fog_density = 1.156
+
+[sub_resource type="BoxMesh" id="BoxMesh_hqpxh"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ghtud"]
+albedo_color = Color(0.27451, 0.239216, 0.184314, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ghtud"]
+points = PackedVector3Array(0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ghtud"]
+top_radius = 1.0
+bottom_radius = 1.0
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_tap73"]
+points = PackedVector3Array(1, 1, 0, 1, -1, 0, 0.995106, 1, -0.0980814, 0.995106, 1, 0.0978857, 0.995106, -1, 0.0978857, 0.995106, -1, -0.0980814, 0.980619, 1, -0.195184, 0.980619, 1, 0.194988, 0.980619, -1, 0.194988, 0.980619, -1, -0.195184, 0.95693, 1, -0.290329, 0.95693, 1, 0.290133, 0.95693, -1, 0.290133, 0.95693, -1, -0.290329, 0.923845, 1, -0.382733, 0.923845, 1, 0.382537, 0.923845, -1, 0.382537, 0.923845, -1, -0.382733, 0.881754, 1, -0.471417, 0.881754, 1, 0.471222, 0.881754, -1, 0.471222, 0.881754, -1, -0.471417, 0.831441, 1, -0.555599, 0.831441, 1, 0.555403, 0.831441, -1, 0.555403, 0.831441, -1, -0.555599, 0.772905, 1, -0.634495, 0.772905, 1, 0.634299, 0.772905, -1, 0.634299, 0.772905, -1, -0.634495, 0.70693, 1, -0.707126, 0.70693, 1, 0.70693, 0.70693, -1, 0.70693, 0.70693, -1, -0.707126, 0.634299, 1, -0.773101, 0.634299, 1, 0.772905, 0.634299, -1, 0.772905, 0.634299, -1, -0.773101, 0.555403, 1, -0.831637, 0.555403, 1, 0.831441, 0.555403, -1, 0.831441, 0.555403, -1, -0.831637, 0.471222, 1, -0.88195, 0.471222, 1, 0.881754, 0.471222, -1, 0.881754, 0.471222, -1, -0.88195, 0.382537, 1, -0.924041, 0.382537, 1, 0.923845, 0.382537, -1, 0.923845, 0.382537, -1, -0.924041, 0.290133, 1, -0.957126, 0.290133, 1, 0.95693, 0.290133, -1, 0.95693, 0.290133, -1, -0.957126, 0.194988, 1, -0.980814, 0.194988, 1, 0.980619, 0.194988, -1, 0.980619, 0.194988, -1, -0.980814, 0.0978857, 1, -0.995301, 0.0978857, 1, 0.995106, 0.0978857, -1, 0.995106, 0.0978857, -1, -0.995301, 0, 1, -1, 0, 1, 1, 0, -1, 1, 0, -1, -1, -0.0980814, 1, -0.995301, -0.0980814, 1, 0.995106, -0.0980814, -1, 0.995106, -0.0980814, -1, -0.995301, -0.195184, 1, -0.980814, -0.195184, 1, 0.980619, -0.195184, -1, 0.980619, -0.195184, -1, -0.980814, -0.290329, 1, -0.957126, -0.290329, 1, 0.95693, -0.290329, -1, 0.95693, -0.290329, -1, -0.957126, -0.382733, 1, -0.924041, -0.382733, 1, 0.923845, -0.382733, -1, 0.923845, -0.382733, -1, -0.924041, -0.471417, 1, -0.88195, -0.471417, 1, 0.881754, -0.471417, -1, 0.881754, -0.471417, -1, -0.88195, -0.555599, 1, -0.831637, -0.555599, 1, 0.831441, -0.555599, -1, 0.831441, -0.555599, -1, -0.831637, -0.634495, 1, -0.773101, -0.634495, 1, 0.772905, -0.634495, -1, 0.772905, -0.634495, -1, -0.773101, -0.707126, 1, -0.707126, -0.707126, 1, 0.70693, -0.707126, -1, 0.70693, -0.707126, -1, -0.707126, -0.773101, 1, -0.634495, -0.773101, 1, 0.634299, -0.773101, -1, 0.634299, -0.773101, -1, -0.634495, -0.831637, 1, -0.555599, -0.831637, 1, 0.555403, -0.831637, -1, 0.555403, -0.831637, -1, -0.555599, -0.88195, 1, -0.471417, -0.88195, 1, 0.471222, -0.88195, -1, 0.471222, -0.88195, -1, -0.471417, -0.924041, 1, -0.382733, -0.924041, 1, 0.382537, -0.924041, -1, 0.382537, -0.924041, -1, -0.382733, -0.957126, 1, -0.290329, -0.957126, 1, 0.290133, -0.957126, -1, 0.290133, -0.957126, -1, -0.290329, -0.980814, 1, -0.195184, -0.980814, 1, 0.194988, -0.980814, -1, 0.194988, -0.980814, -1, -0.195184, -0.995301, 1, -0.0980814, -0.995301, 1, 0.0978857, -0.995301, -1, 0.0978857, -0.995301, -1, -0.0980814, -1, 1, 0, -1, -1, 0)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_hxqse"]
+points = PackedVector3Array(1, 1, 0, 1, -1, 0, 0.995106, 1, -0.0980814, 0.995106, 1, 0.0978857, 0.995106, -1, 0.0978857, 0.995106, -1, -0.0980814, 0.980619, 1, -0.195184, 0.980619, 1, 0.194988, 0.980619, -1, 0.194988, 0.980619, -1, -0.195184, 0.95693, 1, -0.290329, 0.95693, 1, 0.290133, 0.95693, -1, 0.290133, 0.95693, -1, -0.290329, 0.923845, 1, -0.382733, 0.923845, 1, 0.382537, 0.923845, -1, 0.382537, 0.923845, -1, -0.382733, 0.881754, 1, -0.471417, 0.881754, 1, 0.471222, 0.881754, -1, 0.471222, 0.881754, -1, -0.471417, 0.831441, 1, -0.555599, 0.831441, 1, 0.555403, 0.831441, -1, 0.555403, 0.831441, -1, -0.555599, 0.772905, 1, -0.634495, 0.772905, 1, 0.634299, 0.772905, -1, 0.634299, 0.772905, -1, -0.634495, 0.70693, 1, -0.707126, 0.70693, 1, 0.70693, 0.70693, -1, 0.70693, 0.70693, -1, -0.707126, 0.634299, 1, -0.773101, 0.634299, 1, 0.772905, 0.634299, -1, 0.772905, 0.634299, -1, -0.773101, 0.555403, 1, -0.831637, 0.555403, 1, 0.831441, 0.555403, -1, 0.831441, 0.555403, -1, -0.831637, 0.471222, 1, -0.88195, 0.471222, 1, 0.881754, 0.471222, -1, 0.881754, 0.471222, -1, -0.88195, 0.382537, 1, -0.924041, 0.382537, 1, 0.923845, 0.382537, -1, 0.923845, 0.382537, -1, -0.924041, 0.290133, 1, -0.957126, 0.290133, 1, 0.95693, 0.290133, -1, 0.95693, 0.290133, -1, -0.957126, 0.194988, 1, -0.980814, 0.194988, 1, 0.980619, 0.194988, -1, 0.980619, 0.194988, -1, -0.980814, 0.0978857, 1, -0.995301, 0.0978857, 1, 0.995106, 0.0978857, -1, 0.995106, 0.0978857, -1, -0.995301, 0, 1, -1, 0, 1, 1, 0, -1, 1, 0, -1, -1, -0.0980814, 1, -0.995301, -0.0980814, 1, 0.995106, -0.0980814, -1, 0.995106, -0.0980814, -1, -0.995301, -0.195184, 1, -0.980814, -0.195184, 1, 0.980619, -0.195184, -1, 0.980619, -0.195184, -1, -0.980814, -0.290329, 1, -0.957126, -0.290329, 1, 0.95693, -0.290329, -1, 0.95693, -0.290329, -1, -0.957126, -0.382733, 1, -0.924041, -0.382733, 1, 0.923845, -0.382733, -1, 0.923845, -0.382733, -1, -0.924041, -0.471417, 1, -0.88195, -0.471417, 1, 0.881754, -0.471417, -1, 0.881754, -0.471417, -1, -0.88195, -0.555599, 1, -0.831637, -0.555599, 1, 0.831441, -0.555599, -1, 0.831441, -0.555599, -1, -0.831637, -0.634495, 1, -0.773101, -0.634495, 1, 0.772905, -0.634495, -1, 0.772905, -0.634495, -1, -0.773101, -0.707126, 1, -0.707126, -0.707126, 1, 0.70693, -0.707126, -1, 0.70693, -0.707126, -1, -0.707126, -0.773101, 1, -0.634495, -0.773101, 1, 0.634299, -0.773101, -1, 0.634299, -0.773101, -1, -0.634495, -0.831637, 1, -0.555599, -0.831637, 1, 0.555403, -0.831637, -1, 0.555403, -0.831637, -1, -0.555599, -0.88195, 1, -0.471417, -0.88195, 1, 0.471222, -0.88195, -1, 0.471222, -0.88195, -1, -0.471417, -0.924041, 1, -0.382733, -0.924041, 1, 0.382537, -0.924041, -1, 0.382537, -0.924041, -1, -0.382733, -0.957126, 1, -0.290329, -0.957126, 1, 0.290133, -0.957126, -1, 0.290133, -0.957126, -1, -0.290329, -0.980814, 1, -0.195184, -0.980814, 1, 0.194988, -0.980814, -1, 0.194988, -0.980814, -1, -0.195184, -0.995301, 1, -0.0980814, -0.995301, 1, 0.0978857, -0.995301, -1, 0.0978857, -0.995301, -1, -0.0980814, -1, 1, 0, -1, -1, 0)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hqpxh"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tap73"]
+size = Vector3(1, 0.5354, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_hqpxh"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hqpxh"]
+albedo_color = Color(0, 0, 0.258824, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ghtud"]
+size = Vector3(200, 100, 200)
+
+[node name="ShipKeeper" type="Node3D"]
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.627963, 0.778243, 0, -0.778243, 0.627963, 0, 0, 0)
+
+[node name="WorlEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_tap73")
+
+[node name="Ship" type="Node3D" parent="."]
+
+[node name="Hull" type="MeshInstance3D" parent="Ship"]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 8, 0, 0, 0)
+mesh = SubResource("BoxMesh_hqpxh")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_ghtud")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ship/Hull"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ship/Hull/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_ghtud")
+
+[node name="Hull-2" type="MeshInstance3D" parent="Ship"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 4, 0, 0, 4)
+mesh = SubResource("CylinderMesh_ghtud")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_ghtud")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ship/Hull-2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ship/Hull-2/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_tap73")
+
+[node name="Hull-3" type="MeshInstance3D" parent="Ship"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 4, 0, 0, -4)
+mesh = SubResource("CylinderMesh_ghtud")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_ghtud")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ship/Hull-3"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ship/Hull-3/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_hxqse")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="." node_paths=PackedStringArray("camera_pivot", "camera", "feet_collider")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+script = ExtResource("1_ghtud")
+camera_pivot = NodePath("CameraPivot")
+camera = NodePath("CameraPivot/Camera3D")
+feet_collider = NodePath("FeetCollider")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+shape = SubResource("CapsuleShape3D_hqpxh")
+
+[node name="CameraPivot" type="Node3D" parent="CharacterBody3D"]
+
+[node name="Camera3D" type="Camera3D" parent="CharacterBody3D/CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.644579, 0.226873)
+
+[node name="FeetCollider" type="Area3D" parent="CharacterBody3D"]
+collision_mask = 14
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/FeetCollider"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7677, 0)
+shape = SubResource("BoxShape3D_tap73")
+
+[node name="Ocean" type="Node3D" parent="."]
+
+[node name="Mesh" type="MeshInstance3D" parent="Ocean"]
+transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
+mesh = SubResource("PlaneMesh_hqpxh")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_hqpxh")
+
+[node name="WaterCollider" type="Area3D" parent="Ocean" groups=["water"]]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("2_tap73")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ocean/WaterCollider"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -50, 0)
+shape = SubResource("BoxShape3D_ghtud")
