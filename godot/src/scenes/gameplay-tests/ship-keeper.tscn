@@ -57,6 +57,7 @@ transform = Transform3D(1, 0, 0, 0, 0.627963, 0.778243, 0, -0.778243, 0.627963, 
 environment = SubResource("Environment_tap73")
 
 [node name="Ship" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.59413, 0)
 
 [node name="Hull" type="MeshInstance3D" parent="Ship"]
 transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 8, 0, 0, 0)

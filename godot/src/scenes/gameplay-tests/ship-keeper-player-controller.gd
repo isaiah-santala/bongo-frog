@@ -27,11 +27,6 @@ class_name FirstPersonController
 @export var mouse_sensitivity: float = 0.002
 @export var max_look_angle: float = 90.0
 
-# Camera bob settings (reduced for arcade feel)
-@export var bob_frequency: float = 1.5
-@export var bob_amplitude: float = 0.04
-@export var bob_enabled: bool = true
-
 # Get the gravity from the project settings
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
@@ -41,12 +36,10 @@ var is_swimming: bool = false
 var is_head_underwater: bool = false
 var is_on_surface: bool = false
 var coyote_timer: float = 0.0
-var bob_time: float = 0.0
 
 # Camera references
 @export var camera_pivot: Node3D
 @export var camera: Camera3D
-var camera_original_position: Vector3
 
 # Water detection
 var feet_water_bodies: Array[Area3D] = []
@@ -63,10 +56,6 @@ func _ready():
     assert(underwater_effect, "Underwater effect node is not assigned.")
     # Capture mouse
     Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-    
-    # Store original camera position for head bob
-    if camera:
-        camera_original_position = camera.position
     
     feet_collider.area_entered.connect(_on_feet_entered_area)
     feet_collider.area_exited.connect(_on_feet_exited_area)
@@ -91,7 +80,7 @@ func _physics_process(delta):
     handle_jumping()
     handle_swimming(delta)
     apply_movement(delta)
-    update_camera_effects(delta)
+    update_camera_effects()
 
 func handle_mouse_look(relative_motion: Vector2):
     # Rotate the body horizontally
@@ -217,7 +206,7 @@ func handle_swimming(delta):
     if not is_on_surface:
         velocity.y += buoyancy_force * delta * 1.5
     
-    # Check for swimming up/down inputs (works in both modes)
+    # Check for swimming up/down inputs - treat jump and swim-up identically, crouch and swim-down identically
     var swim_up_pressed = Input.is_action_pressed("jump") or Input.is_action_pressed("swim-up")
     var swim_down_pressed = Input.is_action_pressed("crouch") or Input.is_action_pressed("swim-down")
     
@@ -238,10 +227,10 @@ func handle_swimming(delta):
         # With camera-relative swimming, vertical controls still work
         if swim_down_pressed:
             velocity.y -= swim_speed * delta * 2.0 # Force downward
-        elif swim_up_pressed and not Input.is_action_pressed("jump"):
-            # Only apply swim-up if it's not the jump key (to avoid double application)
+        elif swim_up_pressed:
+            # Treat jump and swim-up identically - no special case for jump anymore
             velocity.y += swim_speed * delta * 1.5 # Force upward
-        elif not swim_up_pressed:
+        else:
             # Gentle buoyancy when not actively moving up
             if not is_on_surface:
                 velocity.y = move_toward(velocity.y, buoyancy_force * 0.1, water_drag * delta)
@@ -268,27 +257,8 @@ func apply_movement(delta):
     # Move the character
     move_and_slide()
 
-func update_camera_effects(delta):
+func update_camera_effects():
     underwater_effect.visible = is_head_underwater
-    
-    if not camera or not bob_enabled:
-        return
-    
-    # Head bob when walking/running on ground
-    var horizontal_velocity = Vector2(velocity.x, velocity.z).length()
-    
-    if is_on_floor() and horizontal_velocity > 0.1 and not is_swimming:
-        bob_time += delta * bob_frequency * (2.0 if is_sprinting else 1.0)
-        var bob_offset = Vector3(
-            cos(bob_time * 0.5) * bob_amplitude * 0.5,
-            sin(bob_time) * bob_amplitude,
-            0
-        )
-        camera.position = camera_original_position + bob_offset
-    else:
-        # Return to original position
-        bob_time = 0.0
-        camera.position = camera.position.lerp(camera_original_position, delta * 5.0)
 
 # Water detection functions
 func _on_feet_entered_area(area: Area3D):
