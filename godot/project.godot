@@ -17,6 +17,10 @@ boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/image="uid://ybsk1dcxybir"
 config/icon="uid://c6bo4mg8u4iu5"
 
+[display]
+
+window/size/mode=3
+
 [editor]
 
 naming/node_name_num_separator=3
@@ -82,6 +86,7 @@ swim-down={
 3d_physics/layer_3="Water"
 3d_physics/layer_4="Ship"
 3d_physics/layer_5="Enemy"
+3d_physics/layer_6="Floaty"
 
 [rendering]
 
