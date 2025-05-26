@@ -1,0 +1,538 @@
+[gd_scene load_steps=3 format=3 uid="uid://coy2rtdp1n8ln"]
+
+[ext_resource type="ArrayMesh" uid="uid://deyknpasmrb30" path="res://src/assets/models/branch.tres" id="2_kj7on"]
+
+[sub_resource type="GDScript" id="GDScript_i8hjl"]
+script/source = "extends Node3D
+class_name MultiMeshFloaty
+
+enum State {
+    FALLING,
+    RISING
+}
+
+# Individual branch data structure
+class BranchData:
+    var position: Vector3
+    var rotation: Basis
+    var velocity: Vector3
+    var angular_velocity: Vector3
+    var state: State = State.FALLING
+    var is_floating: bool = false
+    var previous_floating_state: bool = false
+    var target_y: float
+    var just_hit_water: bool = false
+    var previous_y_position: float = 0.0
+    
+    # Center of mass and rotation
+    var center_of_mass: Vector3
+    
+    # Transition timing
+    var floating_state_change_time: float = 0.0
+    var time_since_last_change: float = 0.0
+    var is_in_transition: bool = false
+    
+    func _init(pos: Vector3, rot: Basis, com: Vector3):
+        position = pos
+        rotation = rot
+        velocity = Vector3.ZERO
+        angular_velocity = Vector3.ZERO
+        center_of_mass = com
+        target_y = MultiMeshFloaty.WATER_LEVEL + 0.1 # Default buoyancy offset
+        previous_y_position = pos.y
+
+@export_group(\"MultiMesh Setup\")
+@export var branch_mesh: Mesh
+@export var branch_count: int = 100
+@export var spawn_area_size: Vector2 = Vector2(50, 50) # X and Z spawn area
+@export var spawn_height_range: Vector2 = Vector2(5, 15) # Min and max height above water
+@export var random_rotation: bool = true
+
+@export_group(\"Float Settings\")
+@export var buoyancy_offset: float = 0.1
+@export var float_zone_above_water: float = 0.2
+@export var float_zone_below_water: float = 1.5
+@export var underwater_threshold: float = 0.125
+@export var above_water_threshold: float = -0.05
+
+@export_group(\"Movement Forces\")
+@export var normal_fall_force: float = 50.0
+@export var normal_rise_force: float = 30.0
+@export var float_fall_force: float = 8.0
+@export var float_rise_force: float = 12.0
+
+@export_group(\"Speed Limits\")
+@export var normal_max_fall_speed: float = 50.0
+@export var normal_max_rise_speed: float = 15.0
+@export var float_max_fall_speed: float = 2.0
+@export var float_max_rise_speed: float = 3.0
+
+@export_group(\"Damping\")
+@export var normal_damping: float = 0.99
+@export var float_damping: float = 0.2
+@export var impact_speed_reduction: float = 0.3
+
+@export_group(\"Advanced\")
+@export var sky_gravity_multiplier: float = 3.0
+@export var sky_threshold: float = 10.0
+
+@export_group(\"Center of Mass & Rotation\")
+@export var enable_com_rotation: bool = true
+@export var rotation_strength: float = 2.0
+@export var rotation_damping: float = 0.95
+@export var com_offset: Vector3 = Vector3.ZERO
+@export var buoyancy_up_vector: Vector3 = Vector3.UP
+
+@export_group(\"Transition Rotation\")
+@export var transition_time_threshold: float = 2.0
+@export var transition_rotation_multiplier: float = 128.0
+@export var transition_damping_multiplier: float = 0.6
+@export var initial_impact_multiplier: float = 1600.0
+@export var initial_impact_duration: float = 0.05
+@export var snap_rotation_threshold: float = 0.2
+@export var force_upright_on_impact: bool = true
+@export var debug_rotation: bool = false
+
+const WATER_LEVEL: float = 0.0
+
+var multi_mesh_instance: MultiMeshInstance3D
+var branches: Array[BranchData] = []
+
+func _ready() -> void:
+    _setup_multimesh()
+    _spawn_branches()
+
+func _setup_multimesh() -> void:
+    \"\"\"Setup the MultiMeshInstance3D node\"\"\"
+    multi_mesh_instance = MultiMeshInstance3D.new()
+    add_child(multi_mesh_instance)
+    
+    var multi_mesh = MultiMesh.new()
+    multi_mesh.transform_format = MultiMesh.TRANSFORM_3D
+    multi_mesh.instance_count = branch_count
+    multi_mesh.mesh = branch_mesh
+    
+    multi_mesh_instance.multimesh = multi_mesh
+
+func _spawn_branches() -> void:
+    \"\"\"Spawn branches at random positions\"\"\"
+    branches.clear()
+    branches.resize(branch_count)
+    
+    for i in range(branch_count):
+        # Random position
+        var x = randf_range(-spawn_area_size.x / 2, spawn_area_size.x / 2)
+        var z = randf_range(-spawn_area_size.y / 2, spawn_area_size.y / 2)
+        var y = WATER_LEVEL + randf_range(spawn_height_range.x, spawn_height_range.y)
+        var pos = Vector3(x, y, z)
+        
+        # Random or default rotation
+        var rot = Basis.IDENTITY
+        if random_rotation:
+            rot = Basis(Vector3.UP, randf() * TAU) * Basis(Vector3.RIGHT, randf_range(-PI / 4, PI / 4))
+        
+        # Calculate center of mass (simplified - use mesh center or manual offset)
+        var com = _calculate_com_for_mesh()
+        
+        # Create branch data
+        var branch = BranchData.new(pos, rot, com)
+        branch.target_y = WATER_LEVEL + buoyancy_offset
+        branches[i] = branch
+        
+        # Set initial transform in MultiMesh
+        var transform = Transform3D(rot, pos)
+        multi_mesh_instance.multimesh.set_instance_transform(i, transform)
+
+func _calculate_com_for_mesh() -> Vector3:
+    \"\"\"Calculate center of mass for mesh\"\"\"
+    if branch_mesh and branch_mesh.get_aabb():
+        # Use AABB center as approximation for center of mass
+        var aabb = branch_mesh.get_aabb()
+        return aabb.get_center() + com_offset
+    else:
+        # Use manual offset
+        return com_offset
+
+func _physics_process(delta: float) -> void:
+    \"\"\"Update all branches\"\"\"
+    for i in range(branch_count):
+        var branch = branches[i]
+        _update_branch(branch, delta)
+        
+        # Update MultiMesh transform
+        var transform = Transform3D(branch.rotation, branch.position)
+        multi_mesh_instance.multimesh.set_instance_transform(i, transform)
+
+func _update_branch(branch: BranchData, delta: float) -> void:
+    \"\"\"Update a single branch's physics and state\"\"\"
+    _check_water_impact(branch)
+    _update_floating_state(branch)
+    _update_transition_timing(branch, delta)
+    _update_movement_state(branch)
+    _apply_physics(branch, delta)
+    
+    # Apply center of mass rotation when floating OR during transition period
+    if enable_com_rotation and (branch.is_floating or branch.is_in_transition):
+        _apply_com_rotation(branch, delta)
+    
+    # Update previous position for next frame
+    branch.previous_y_position = branch.position.y
+
+func _check_water_impact(branch: BranchData) -> void:
+    \"\"\"Check if branch just hit the water surface\"\"\"
+    var current_y = branch.position.y
+    
+    # Check if we crossed the water level from above
+    if branch.previous_y_position > WATER_LEVEL and current_y <= WATER_LEVEL:
+        branch.just_hit_water = true
+        _on_water_impact(branch)
+    else:
+        branch.just_hit_water = false
+
+func _on_water_impact(branch: BranchData) -> void:
+    \"\"\"Called when branch hits water surface\"\"\"
+    branch.floating_state_change_time = 0.0
+    branch.time_since_last_change = 0.0
+    branch.is_in_transition = true
+    
+    if debug_rotation:
+        print(\"Branch hit water surface - starting enhanced rotation\")
+    
+    # Force immediate upright orientation if enabled
+    if force_upright_on_impact:
+        _force_upright_orientation(branch)
+
+func _force_upright_orientation(branch: BranchData) -> void:
+    \"\"\"Force the object to orient correctly immediately\"\"\"
+    # Get world position of center of mass
+    var world_com = branch.rotation * branch.center_of_mass + branch.position
+    
+    # Calculate desired up direction (towards water surface from COM)
+    var to_surface = Vector3(world_com.x, WATER_LEVEL, world_com.z) - world_com
+    var desired_up = buoyancy_up_vector
+    
+    # For logs, we want them to float horizontally, so use the shortest rotation
+    var current_up = branch.rotation.y
+    var current_forward = branch.rotation.z
+    
+    # Find the best orientation (either current up or forward should point up)
+    var up_to_up_angle = current_up.angle_to(desired_up)
+    var forward_to_up_angle = current_forward.angle_to(desired_up)
+    var backward_to_up_angle = (-current_forward).angle_to(desired_up)
+    
+    var target_basis = branch.rotation
+    
+    # Choose the orientation that requires the least rotation
+    if up_to_up_angle < forward_to_up_angle and up_to_up_angle < backward_to_up_angle:
+        # Current up is closest to desired up
+        target_basis = target_basis.looking_at(branch.position + current_forward, desired_up)
+    elif forward_to_up_angle < backward_to_up_angle:
+        # Current forward should become up
+        target_basis = target_basis.looking_at(branch.position + current_up, current_forward)
+    else:
+        # Current backward should become up
+        target_basis = target_basis.looking_at(branch.position + current_up, -current_forward)
+    
+    # Apply the new orientation
+    branch.rotation = target_basis
+    
+    # Stop any angular velocity
+    branch.angular_velocity = Vector3.ZERO
+    
+    if debug_rotation:
+        print(\"Forced upright orientation - angles: up=\", up_to_up_angle, \" forward=\", forward_to_up_angle, \" backward=\", backward_to_up_angle)
+
+func _update_floating_state(branch: BranchData) -> void:
+    \"\"\"Update whether branch is in floating mode\"\"\"
+    var current_y = branch.position.y
+    var distance_from_water = current_y - WATER_LEVEL
+    
+    # Store previous state
+    branch.previous_floating_state = branch.is_floating
+    
+    # Check if we're within the floating zone
+    if distance_from_water >= 0:
+        branch.is_floating = distance_from_water <= float_zone_above_water
+    else:
+        branch.is_floating = abs(distance_from_water) <= float_zone_below_water
+    
+    # Check if floating state has changed
+    if branch.is_floating != branch.previous_floating_state:
+        _on_floating_state_changed(branch)
+
+func _on_floating_state_changed(branch: BranchData) -> void:
+    \"\"\"Called when the floating state changes\"\"\"
+    branch.floating_state_change_time = 0.0
+    branch.time_since_last_change = 0.0
+    branch.is_in_transition = true
+
+func _update_transition_timing(branch: BranchData, delta: float) -> void:
+    \"\"\"Update transition timing variables\"\"\"
+    if branch.is_in_transition:
+        branch.time_since_last_change += delta
+        
+        if branch.time_since_last_change >= transition_time_threshold:
+            branch.is_in_transition = false
+
+func _get_rotation_multiplier(branch: BranchData) -> float:
+    \"\"\"Get the current rotation strength multiplier based on transition state\"\"\"
+    if branch.is_in_transition:
+        var transition_progress = branch.time_since_last_change / transition_time_threshold
+        
+        # Apply extra strong rotation for initial impact
+        if branch.time_since_last_change <= initial_impact_duration:
+            var impact_progress = branch.time_since_last_change / initial_impact_duration
+            var current_multiplier = lerp(initial_impact_multiplier, transition_rotation_multiplier, impact_progress)
+            return current_multiplier
+        else:
+            # After initial impact, lerp from transition multiplier to normal
+            var adjusted_progress = (branch.time_since_last_change - initial_impact_duration) / (transition_time_threshold - initial_impact_duration)
+            return lerp(transition_rotation_multiplier, 1.0, adjusted_progress)
+    else:
+        return 1.0
+
+func _get_rotation_damping_multiplier(branch: BranchData) -> float:
+    \"\"\"Get the current rotation damping multiplier based on transition state\"\"\"
+    if branch.is_in_transition:
+        var transition_progress = branch.time_since_last_change / transition_time_threshold
+        
+        if branch.time_since_last_change <= initial_impact_duration:
+            var impact_progress = branch.time_since_last_change / initial_impact_duration
+            var initial_damping = transition_damping_multiplier * 0.4
+            var current_damping = lerp(initial_damping, transition_damping_multiplier, impact_progress)
+            return current_damping
+        else:
+            var adjusted_progress = (branch.time_since_last_change - initial_impact_duration) / (transition_time_threshold - initial_impact_duration)
+            return lerp(transition_damping_multiplier, 1.0, adjusted_progress)
+    else:
+        return 1.0
+
+func _update_movement_state(branch: BranchData) -> void:
+    \"\"\"Update whether branch should be falling or rising\"\"\"
+    var current_y = branch.position.y
+    
+    match branch.state:
+        State.FALLING:
+            var underwater_target = WATER_LEVEL - underwater_threshold
+            if current_y <= underwater_target:
+                branch.state = State.RISING
+        
+        State.RISING:
+            var above_target = branch.target_y + above_water_threshold
+            if current_y >= above_target:
+                branch.state = State.FALLING
+
+func _get_current_forces(branch: BranchData) -> Dictionary:
+    \"\"\"Get the appropriate forces based on current state and floating mode\"\"\"
+    var forces = {}
+    
+    if branch.is_floating:
+        forces.fall_force = float_fall_force
+        forces.rise_force = float_rise_force
+        forces.max_fall_speed = float_max_fall_speed
+        forces.max_rise_speed = float_max_rise_speed
+        forces.damping = float_damping
+    else:
+        forces.fall_force = normal_fall_force
+        forces.rise_force = normal_rise_force
+        forces.max_fall_speed = normal_max_fall_speed
+        forces.max_rise_speed = normal_max_rise_speed
+        forces.damping = normal_damping
+    
+    return forces
+
+func _is_sky_falling(branch: BranchData) -> bool:
+    return branch.position.y > WATER_LEVEL + sky_threshold
+
+func _apply_com_rotation(branch: BranchData, delta: float) -> void:
+    \"\"\"Apply center of mass rotation - FIXED to match original Floaty class\"\"\"
+    # Get world position of center of mass
+    var world_com = branch.rotation * branch.center_of_mass + branch.position
+    
+    # Calculate buoyancy force direction (towards water surface)
+    var to_surface = Vector3(world_com.x, WATER_LEVEL, world_com.z) - world_com
+    var buoyancy_direction = to_surface.normalized()
+    
+    # Calculate desired up direction (opposite to buoyancy force)
+    # This is the key fix - we want the opposite of buoyancy direction
+    var desired_up = - buoyancy_direction
+    if desired_up.length() < 0.1:
+        desired_up = buoyancy_up_vector
+    
+    # Get current up direction
+    var current_up = branch.rotation.y
+    
+    # Calculate rotation needed
+    var rotation_axis = current_up.cross(desired_up)
+    if rotation_axis.length() > 0.001:
+        rotation_axis = rotation_axis.normalized()
+        var rotation_angle = current_up.angle_to(desired_up)
+        
+        if debug_rotation:
+            print(\"Rotation needed: \", rotation_angle, \" radians (\", rad_to_deg(rotation_angle), \" degrees)\")
+        
+        # Check for snap rotation during initial impact
+        if branch.is_in_transition and branch.time_since_last_change <= initial_impact_duration:
+            if rotation_angle < snap_rotation_threshold:
+                # Snap instantly to correct orientation
+                var snap_quaternion = Quaternion(current_up, desired_up)
+                branch.rotation = Basis(snap_quaternion) * branch.rotation
+                branch.angular_velocity = Vector3.ZERO
+                if debug_rotation:
+                    print(\"Snapped to correct orientation\")
+                return
+        
+        # Apply transition multiplier to rotation strength
+        var effective_rotation_strength = rotation_strength * _get_rotation_multiplier(branch)
+        
+        if debug_rotation and branch.is_in_transition:
+            print(\"Effective rotation strength: \", effective_rotation_strength, \" (multiplier: \", _get_rotation_multiplier(branch), \")\")
+        
+        # Update angular velocity
+        branch.angular_velocity += rotation_axis * rotation_angle * effective_rotation_strength * delta
+        
+        # Apply rotational damping with transition multiplier
+        var effective_damping = rotation_damping * _get_rotation_damping_multiplier(branch)
+        branch.angular_velocity *= effective_damping
+        
+        # Apply rotation
+        if branch.angular_velocity.length() > 0.001:
+            var rotation_quaternion = Quaternion(branch.angular_velocity.normalized(),
+                                               branch.angular_velocity.length() * delta)
+            branch.rotation = Basis(rotation_quaternion) * branch.rotation
+
+func _apply_physics(branch: BranchData, delta: float) -> void:
+    \"\"\"Apply physics to branch\"\"\"
+    var forces = _get_current_forces(branch)
+    
+    match branch.state:
+        State.FALLING:
+            # Apply downward force
+            var fall_force = forces.fall_force
+            if _is_sky_falling(branch) and not branch.is_floating:
+                fall_force *= sky_gravity_multiplier
+            
+            branch.velocity.y -= fall_force * delta
+            
+            # Limit fall speed
+            if branch.velocity.y < -forces.max_fall_speed:
+                branch.velocity.y = - forces.max_fall_speed
+        
+        State.RISING:
+            # Apply upward force
+            branch.velocity.y += forces.rise_force * delta
+            
+            # Limit rise speed
+            if branch.velocity.y > forces.max_rise_speed:
+                branch.velocity.y = forces.max_rise_speed
+    
+    # Handle impact when hitting water from above
+    if not branch.is_floating and branch.velocity.y < -10.0 and branch.position.y <= WATER_LEVEL:
+        branch.velocity.y *= impact_speed_reduction
+    
+    # Apply damping
+    branch.velocity *= Vector3(forces.damping, forces.damping, forces.damping)
+    
+    # Apply movement
+    branch.position += branch.velocity * delta
+
+# Utility functions
+func respawn_all_branches() -> void:
+    \"\"\"Respawn all branches at random positions above water\"\"\"
+    _spawn_branches()
+
+func get_branch_count() -> int:
+    \"\"\"Get the current number of branches\"\"\"
+    return branch_count
+
+func set_branch_count(count: int) -> void:
+    \"\"\"Change the number of branches (requires respawn)\"\"\"
+    branch_count = count
+    _setup_multimesh()
+    _spawn_branches()
+
+func get_floating_branch_count() -> int:
+    \"\"\"Get number of branches currently floating\"\"\"
+    var count = 0
+    for branch in branches:
+        if branch.is_floating:
+            count += 1
+    return count
+
+func get_branches_in_state(state: State) -> int:
+    \"\"\"Get number of branches in specific state\"\"\"
+    var count = 0
+    for branch in branches:
+        if branch.state == state:
+            count += 1
+    return count
+
+func set_buoyancy_height(height: float) -> void:
+    \"\"\"Set how high above water to float\"\"\"
+    buoyancy_offset = height
+    for branch in branches:
+        branch.target_y = WATER_LEVEL + buoyancy_offset
+
+func set_float_zones(above_water: float, below_water: float) -> void:
+    \"\"\"Set the floating zone thresholds separately\"\"\"
+    float_zone_above_water = above_water
+    float_zone_below_water = below_water
+
+func teleport_branch_above_water(branch_index: int, height: float) -> void:
+    \"\"\"Teleport a specific branch to height above water and start falling\"\"\"
+    if branch_index >= 0 and branch_index < branches.size():
+        var branch = branches[branch_index]
+        branch.position.y = WATER_LEVEL + height
+        branch.state = State.FALLING
+        branch.velocity = Vector3.ZERO
+        branch.angular_velocity = Vector3.ZERO
+        branch.is_in_transition = false
+        branch.time_since_last_change = 0.0
+
+func teleport_all_branches_above_water(height: float) -> void:
+    \"\"\"Teleport all branches to height above water\"\"\"
+    for i in range(branches.size()):
+        teleport_branch_above_water(i, height)
+
+# Center of mass functions
+func get_center_of_mass() -> Vector3:
+    \"\"\"Get the current center of mass offset\"\"\"
+    return com_offset
+
+func set_center_of_mass(new_com: Vector3) -> void:
+    \"\"\"Manually set the center of mass offset for all branches\"\"\"
+    com_offset = new_com
+    for branch in branches:
+        branch.center_of_mass = _calculate_com_for_mesh()
+
+func set_rotation_strength(strength: float) -> void:
+    \"\"\"Set how strong the rotation correction is\"\"\"
+    rotation_strength = strength
+
+func enable_rotation(enabled: bool) -> void:
+    \"\"\"Enable or disable center of mass rotation\"\"\"
+    enable_com_rotation = enabled
+
+# Transition control functions
+func set_transition_threshold(time: float) -> void:
+    \"\"\"Set how long the transition period lasts\"\"\"
+    transition_time_threshold = time
+
+func set_transition_rotation_multiplier(multiplier: float) -> void:
+    \"\"\"Set how much faster rotation is during transition\"\"\"
+    transition_rotation_multiplier = multiplier
+
+func set_transition_damping_multiplier(multiplier: float) -> void:
+    \"\"\"Set additional damping during transition\"\"\"
+    transition_damping_multiplier = multiplier
+
+func set_initial_impact_settings(multiplier: float, duration: float) -> void:
+    \"\"\"Set initial impact rotation strength and duration\"\"\"
+    initial_impact_multiplier = multiplier
+    initial_impact_duration = duration"
+
+[node name="Branches" type="MultiMeshInstance3D"]
+script = SubResource("GDScript_i8hjl")
+branch_mesh = ExtResource("2_kj7on")
+branch_count = 300
+spawn_area_size = Vector2(200, 200)

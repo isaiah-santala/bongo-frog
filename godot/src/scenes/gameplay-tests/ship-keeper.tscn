@@ -752,13 +752,196 @@ collision_mask = 0
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Rocks/M-48/StaticBody3D"]
 shape = SubResource("ConvexPolygonShape3D_cmjyv")
 
-[node name="Branches" type="Node" parent="."]
+[node name="Branches" type="Node3D" parent="."]
 
 [node name="Branch" parent="Branches" instance=ExtResource("5_1b418")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.19608, 3.904, -6.94136)
+transform = Transform3D(0.809396, 0, -0.587263, 0, 1, 0, 0.587263, 0, 0.809396, -22.0685, 5.70555, 4.12463)
 
 [node name="Branch-2" parent="Branches" instance=ExtResource("5_1b418")]
-transform = Transform3D(0.709989, 0, -0.704213, -0.404453, 0.818621, -0.407771, 0.576484, 0.574334, 0.581212, 5.19608, 3.904, -4.7419)
+transform = Transform3D(0.752587, 0, 0.658493, 0, 1, 0, -0.658493, 0, 0.752587, -20.0688, 5.70555, 41.1292)
 
 [node name="Branch-3" parent="Branches" instance=ExtResource("5_1b418")]
-transform = Transform3D(-0.310821, -0.542364, -0.780533, -0.404453, 0.818621, -0.407771, 0.860121, 0.188946, -0.473806, 6.84516, 5.46775, -4.7419)
+transform = Transform3D(-0.99462, 0, 0.103591, 0, 1, 0, -0.103591, 0, -0.99462, 44.3849, 5.70555, 14.9323)
+
+[node name="Branch-4" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.322233, 0, -0.946661, 0, 1, 0, 0.946661, 0, -0.322233, 24.1415, 5.70555, -16.1087)
+
+[node name="Branch-5" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.0669878, 0, 0.997754, 0, 1, 0, -0.997754, 0, 0.0669878, -8.82257, 5.70555, 63.3565)
+
+[node name="Branch-6" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.957858, 0, 0.287243, 0, 1, 0, -0.287243, 0, -0.957858, 21.454, 5.70555, 41.9867)
+
+[node name="Branch-7" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.44113, 0, -0.897443, 0, 1, 0, 0.897443, 0, 0.44113, -35.0042, 5.70555, 1.32926)
+
+[node name="Branch-8" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.973082, 0, 0.230457, 0, 1, 0, -0.230457, 0, 0.973082, -50.5295, 5.70555, 34.979)
+
+[node name="Branch-9" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.969458, 0.0155289, 0.244764, -0.00790752, 0.999454, -0.0320898, -0.245128, 0.0291743, 0.969052, -30.189, 6.06644, -4.23621)
+
+[node name="Branch-10" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.0229918, 0.0155289, 0.999615, 0.029527, 0.999454, -0.0148473, -0.999299, 0.0291743, -0.0234377, -0.508572, 4.95835, 17.9264)
+
+[node name="Branch-11" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.716987, 0.0155289, -0.696913, -0.00920621, 0.999454, 0.0317416, 0.697026, 0.0291743, -0.716452, 20.6976, 6.56254, -48.3176)
+
+[node name="Branch-12" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.519972, 0.0155289, -0.854042, -0.0329942, 0.999454, -0.00191518, 0.853546, 0.0291743, 0.520201, -16.0992, 7.261, -52.6594)
+
+[node name="Branch-13" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.722779, 0.0155289, 0.690905, 0.0313821, 0.999454, 0.0103659, -0.690366, 0.0291743, -0.722871, 23.7576, 4.41777, 23.5292)
+
+[node name="Branch-14" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.834366, 0.0155289, -0.550992, -0.0031258, 0.999454, 0.0329016, 0.551201, 0.0291743, -0.833862, 26.7629, 5.44884, -13.3929)
+
+[node name="Branch-15" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.971468, 0.0155289, -0.236664, -0.0219874, 0.999454, -0.0246747, 0.236151, 0.0291743, 0.971278, -40.6252, 5.99104, 3.90169)
+
+[node name="Branch-16" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.446821, 0.0155289, 0.894488, 0.0191658, 0.999454, -0.026925, -0.894418, 0.0291743, 0.44628, -24.7519, 4.76757, 37.3663)
+
+[node name="Branch-17" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.809396, 0, -0.587263, 0, 1, 0, 0.587263, 0, 0.809396, 16.9221, 7.72441, 31.6086)
+
+[node name="Branch-18" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.752587, 0, 0.658493, 0, 1, 0, -0.658493, 0, 0.752587, 18.9219, 7.72441, 68.6132)
+
+[node name="Branch-19" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.99462, 0, 0.103591, 0, 1, 0, -0.103591, 0, -0.99462, 83.3755, 7.72441, 42.4163)
+
+[node name="Branch-20" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.322233, 0, -0.946661, 0, 1, 0, 0.946661, 0, -0.322233, 63.1322, 7.72441, 11.3752)
+
+[node name="Branch-21" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.0669878, 0, 0.997754, 0, 1, 0, -0.997754, 0, 0.0669878, 30.1681, 7.72441, 90.8405)
+
+[node name="Branch-22" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.957858, 0, 0.287243, 0, 1, 0, -0.287243, 0, -0.957858, 60.4446, 7.72441, 69.4706)
+
+[node name="Branch-23" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.44113, 0, -0.897443, 0, 1, 0, 0.897443, 0, 0.44113, 3.98645, 7.72441, 28.8132)
+
+[node name="Branch-24" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.973082, 0, 0.230457, 0, 1, 0, -0.230457, 0, 0.973082, -11.5389, 7.72441, 62.4629)
+
+[node name="Branch-25" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.969458, 0.0155289, 0.244764, -0.00790752, 0.999454, -0.0320898, -0.245128, 0.0291743, 0.969052, 8.80166, 8.0853, 23.2477)
+
+[node name="Branch-26" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.0229918, 0.0155289, 0.999615, 0.029527, 0.999454, -0.0148473, -0.999299, 0.0291743, -0.0234377, 38.4821, 6.97721, 45.4104)
+
+[node name="Branch-27" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.716987, 0.0155289, -0.696913, -0.00920621, 0.999454, 0.0317416, 0.697026, 0.0291743, -0.716452, 59.6882, 8.5814, -20.8337)
+
+[node name="Branch-28" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.519972, 0.0155289, -0.854042, -0.0329942, 0.999454, -0.00191518, 0.853546, 0.0291743, 0.520201, 22.8915, 9.27986, -25.1755)
+
+[node name="Branch-29" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.722779, 0.0155289, 0.690905, 0.0313821, 0.999454, 0.0103659, -0.690366, 0.0291743, -0.722871, 62.7482, 6.43663, 51.0132)
+
+[node name="Branch-30" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.834366, 0.0155289, -0.550992, -0.0031258, 0.999454, 0.0329016, 0.551201, 0.0291743, -0.833862, 65.7535, 7.4677, 14.091)
+
+[node name="Branch-31" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.971468, 0.0155289, -0.236664, -0.0219874, 0.999454, -0.0246747, 0.236151, 0.0291743, 0.971278, -1.63455, 8.0099, 31.3857)
+
+[node name="Branch-32" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.446821, 0.0155289, 0.894488, 0.0191658, 0.999454, -0.026925, -0.894418, 0.0291743, 0.44628, 14.2388, 6.78643, 64.8503)
+
+[node name="Branch-33" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.809396, 0, -0.587263, 0, 1, 0, 0.587263, 0, 0.809396, -148.981, 5.70555, 136.488)
+
+[node name="Branch-34" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.752587, 0, 0.658493, 0, 1, 0, -0.658493, 0, 0.752587, 100.159, 5.70555, 162.223)
+
+[node name="Branch-35" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.99462, 0, 0.103591, 0, 1, 0, -0.103591, 0, -0.99462, 54.5281, 5.70555, -210.596)
+
+[node name="Branch-36" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.322233, 0, -0.946661, 0, 1, 0, 0.946661, 0, -0.322233, -174.071, 5.70555, -108.245)
+
+[node name="Branch-37" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.0669878, 0, 0.997754, 0, 1, 0, -0.997754, 0, 0.0669878, 178.71, 5.70555, 48.4365)
+
+[node name="Branch-38" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.957858, 0, 0.287243, 0, 1, 0, -0.287243, 0, -0.957858, 68.0313, 5.70555, -176.249)
+
+[node name="Branch-39" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.44113, 0, -0.897443, 0, 1, 0, 0.897443, 0, 0.44113, -223.453, 5.70555, 60.634)
+
+[node name="Branch-40" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.973082, 0, 0.230457, 0, 1, 0, -0.230457, 0, 0.973082, -15.2178, 5.70555, 199.816)
+
+[node name="Branch-41" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.969458, 0.0155289, 0.244764, -0.00790752, 0.999454, -0.0320898, -0.245128, 0.0291743, 0.969052, 7.96092, -0.299748, 159.801)
+
+[node name="Branch-42" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.0229918, 0.0155289, 0.999615, 0.029527, 0.999454, -0.0148473, -0.999299, 0.0291743, -0.0234377, 187.394, 2.01285, -14.9328)
+
+[node name="Branch-43" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.716987, 0.0155289, -0.696913, -0.00920621, 0.999454, 0.0317416, 0.697026, 0.0291743, -0.716452, -127.968, 12.8596, -218.662)
+
+[node name="Branch-44" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.519972, 0.0155289, -0.854042, -0.0329942, 0.999454, -0.00191518, 0.853546, 0.0291743, 0.520201, -195.937, 6.88106, 22.3319)
+
+[node name="Branch-45" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.722779, 0.0155289, 0.690905, 0.0313821, 0.999454, 0.0103659, -0.690366, 0.0291743, -0.722871, 150.416, 6.47422, -148.088)
+
+[node name="Branch-46" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.834366, 0.0155289, -0.550992, -0.0031258, 0.999454, 0.0329016, 0.551201, 0.0291743, -0.833862, -92.9542, 11.9761, -207.029)
+
+[node name="Branch-47" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.971468, 0.0155289, -0.236664, -0.0219874, 0.999454, -0.0246747, 0.236151, 0.0291743, 0.971278, -97.9839, 1.09592, 168.381)
+
+[node name="Branch-48" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.446821, 0.0155289, 0.894488, 0.0191658, 0.999454, -0.026925, -0.894418, 0.0291743, 0.44628, 142.295, -0.573989, 97.6927)
+
+[node name="Branch-49" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.809396, 0, -0.587263, 0, 1, 0, 0.587263, 0, 0.809396, -109.991, 7.72441, 163.972)
+
+[node name="Branch-50" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.752587, 0, 0.658493, 0, 1, 0, -0.658493, 0, 0.752587, 139.15, 7.72441, 189.707)
+
+[node name="Branch-51" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.99462, 0, 0.103591, 0, 1, 0, -0.103591, 0, -0.99462, 93.5187, 7.72441, -183.112)
+
+[node name="Branch-52" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.322233, 0, -0.946661, 0, 1, 0, 0.946661, 0, -0.322233, -135.08, 7.72441, -80.7608)
+
+[node name="Branch-53" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.0669878, 0, 0.997754, 0, 1, 0, -0.997754, 0, 0.0669878, 217.701, 7.72441, 75.9205)
+
+[node name="Branch-54" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.957858, 0, 0.287243, 0, 1, 0, -0.287243, 0, -0.957858, 107.022, 7.72441, -148.765)
+
+[node name="Branch-55" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.44113, 0, -0.897443, 0, 1, 0, 0.897443, 0, 0.44113, -184.462, 7.72441, 88.118)
+
+[node name="Branch-56" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.973082, 0, 0.230457, 0, 1, 0, -0.230457, 0, 0.973082, 23.7729, 7.72441, 227.3)
+
+[node name="Branch-57" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.969458, 0.0155289, 0.244764, -0.00790752, 0.999454, -0.0320898, -0.245128, 0.0291743, 0.969052, 46.9516, 1.71911, 187.285)
+
+[node name="Branch-58" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.0229918, 0.0155289, 0.999615, 0.029527, 0.999454, -0.0148473, -0.999299, 0.0291743, -0.0234377, 226.384, 4.03171, 12.5512)
+
+[node name="Branch-59" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.716987, 0.0155289, -0.696913, -0.00920621, 0.999454, 0.0317416, 0.697026, 0.0291743, -0.716452, -88.9778, 14.8785, -191.178)
+
+[node name="Branch-60" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.519972, 0.0155289, -0.854042, -0.0329942, 0.999454, -0.00191518, 0.853546, 0.0291743, 0.520201, -156.947, 8.89992, 49.8158)
+
+[node name="Branch-61" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.722779, 0.0155289, 0.690905, 0.0313821, 0.999454, 0.0103659, -0.690366, 0.0291743, -0.722871, 189.407, 8.49308, -120.604)
+
+[node name="Branch-62" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(-0.834366, 0.0155289, -0.550992, -0.0031258, 0.999454, 0.0329016, 0.551201, 0.0291743, -0.833862, -53.9636, 13.9949, -179.545)
+
+[node name="Branch-63" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.971468, 0.0155289, -0.236664, -0.0219874, 0.999454, -0.0246747, 0.236151, 0.0291743, 0.971278, -58.9932, 3.11478, 195.865)
+
+[node name="Branch-64" parent="Branches" instance=ExtResource("5_1b418")]
+transform = Transform3D(0.446821, 0.0155289, 0.894488, 0.0191658, 0.999454, -0.026925, -0.894418, 0.0291743, 0.44628, 181.285, 1.44487, 125.177)

@@ -1,4 +1,5 @@
 extends Node3D
+class_name Floaty
 
 enum State {
     FALLING,
